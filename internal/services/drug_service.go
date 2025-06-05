@@ -8,14 +8,16 @@ import (
 	"github.com/hyperledger/fabric-gateway/pkg/client"
 )
 
-type DrugService struct{}
-
-func NewDrugService() *DrugService {
-	return &DrugService{}
+type DrugService struct {
+	contract *client.Contract
 }
 
-func (s *DrugService) GetHistoryDrug(contract *client.Contract, ctx context.Context, drugID string) models.BaseListResponse[models.HistoryDrug] {
-	resultBytes, err := contract.EvaluateTransaction("GetHistoryDrug", drugID)
+func NewDrugService(contract *client.Contract) *DrugService {
+	return &DrugService{contract: contract}
+}
+
+func (s *DrugService) GetHistoryDrug(ctx context.Context, drugID string) models.BaseListResponse[models.HistoryDrug] {
+	resultBytes, err := s.contract.EvaluateTransaction("GetHistoryDrug", drugID)
 	if err != nil {
 		return models.ErrorListResponse[models.HistoryDrug](500, "Failed to evaluate GetHistoryDrug transaction: %v", err)
 	}
