@@ -3,6 +3,7 @@ package handlers
 import (
 	"net/http"
 
+	"github.com/AryaJayadi/MedTrace_api_org4/internal/models"
 	"github.com/AryaJayadi/MedTrace_api_org4/internal/services"
 	"github.com/labstack/echo/v4"
 )
@@ -27,10 +28,12 @@ func NewDrugHandler(service *services.DrugService) *DrugHandler {
 func (h *DrugHandler) GetHistoryDrug(c echo.Context) error {
 	drugID := c.Param("drugID")
 	if drugID == "" {
-		return c.JSON(http.StatusBadRequest, map[string]interface{}{"success": false, "error": map[string]interface{}{"code": http.StatusBadRequest, "message": "Drug ID parameter is required"}})
+		resp := models.ErrorListResponse[models.HistoryDrug](http.StatusBadRequest, "Drug ID parameter is required")
+		return c.JSON(http.StatusBadRequest, resp)
 	}
 
 	resp := h.Service.GetHistoryDrug(c.Request().Context(), drugID)
+
 	status := http.StatusOK
 	if !resp.Success {
 		status = resp.Error.Code
