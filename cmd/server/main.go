@@ -59,11 +59,16 @@ func main() {
 	contract := network.GetContract(chaincodeName)
 
 	drugService := services.NewDrugService(contract)
+	organizationService := services.NewOrganizationService(contract)
 
 	drugHandler := handlers.NewDrugHandler(drugService)
+	organizationHandler := handlers.NewOrganizationHandler(organizationService)
 
 	drugsGroup := e.Group("/drugs")
 	drugsGroup.GET("/history/:drugID", drugHandler.GetHistoryDrug)
+
+	organizationsGroup := e.Group("/organizations")
+	organizationsGroup.GET("/", organizationHandler.GetOrganizations)
 
 	e.Logger.Fatal(e.Start(":9090"))
 }
